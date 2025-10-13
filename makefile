@@ -15,17 +15,14 @@ test-coverage:
 	@go tool cover -html=coverage.out -o coverage.html
 
 # Database
-migrate:
-	@go run cmd/cli/main.go migrate
-
-rollback:
-	@go run cmd/cli/main.go rollback
-
-seed:
-	@go run cmd/cli/main.go seed
-
 migration:
-	@go run cmd/cli/main.go migration $(name)
+	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
+
+migrate-up:
+	@go run cmd/migrate/main.go up
+
+migrate-down:
+	@go run cmd/migrate/main.go down
 
 # Development with hot reload
 dev:

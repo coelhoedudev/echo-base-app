@@ -3,36 +3,45 @@ package database
 import (
 	"fmt"
 	"infra-base-go/internal/config"
+	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type Database struct {
-	DB     *gorm.DB
-	config *config.DBConfig
+	DB *gorm.DB
 }
 
-func New(db *gorm.DB, config *config.DBConfig) *Database {
-	return &Database{
-		DB:     db,
-		config: config,
+func New(config *config.DBConfig) (*Database, error) {
+
+	dsn := getDsn(config)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
 	}
+
+	log.Println("Connected to database successfully")
+
+	return &Database{
+		DB: db,
+	}, nil
 }
 
-func (b *Database) Connect() (db *gorm.DB, err error) {
-	dsn := b.getDsn()
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-	return
-}
-
-func (b *Database) getDsn() string {
+func getDsn(config *config.DBConfig) string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		b.config.Host,
-		b.config.User,
-		b.config.Password,
-		b.config.Name,
-		b.config.Port,
+		config.Host,
+		config.User,
+		config.Password,
+		config.Name,
+		config.Port,
 	)
+}
+
+func (d *Database) Close() error {
+	sqlDB, err := d.DB.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDB.Close()
 }
