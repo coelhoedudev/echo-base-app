@@ -12,6 +12,7 @@ type Repository interface {
 	Find(id string) (User, error)
 	Update(user *User) error
 	Delete(id string) error
+	FindByEmail(email string) (User, error)
 }
 
 type repository struct {
@@ -25,11 +26,11 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) Create(user *User) (string, error) {
-	uuid := util.UUID{}.Create()
+	user.ID = util.UUID{}.Create()
 
 	err := r.db.Create(user).Error
 
-	return uuid, err
+	return user.ID, err
 }
 
 func (r *repository) FindAll() ([]User, error) {
