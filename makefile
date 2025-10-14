@@ -15,6 +15,9 @@ test-coverage:
 	@go tool cover -html=coverage.out -o coverage.html
 
 # Database
+# obs:
+# Para usar as migracoes tem de instalar o cli:
+# go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 migration:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
 
@@ -23,6 +26,14 @@ migrate-up:
 
 migrate-down:
 	@go run cmd/migrate/main.go down
+
+migrate-force:
+	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+		echo "Erro: informe a versão. Exemplo: make migrate-force 20251013185523"; \
+		exit 1; \
+	else \
+		go run cmd/migrate/main.go force $(filter-out $@,$(MAKECMDGOALS)); \
+	fi
 
 # Development with hot reload
 dev:

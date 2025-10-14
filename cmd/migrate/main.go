@@ -42,23 +42,28 @@ func main() {
 		log.Fatal(err)
 	}
 
-	command := os.Args[2]
+	command := os.Args[1]
 
 	switch command {
 	case "up":
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
 		}
+		log.Println("Migration up executed")
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
 			log.Fatal(err)
 		}
-	}
-
-	if len(os.Args) > 2 && os.Args[3] == "force" {
-		mVersion, _ := strconv.Atoi(os.Args[len(os.Args)-1])
+		log.Println("Migration down executed")
+	case "force":
+		if len(os.Args) < 3 {
+			log.Fatal("Informe a versão a forçar (ex: force 20251013185523)")
+		}
+		mVersion, _ := strconv.Atoi(os.Args[2])
 		if err := m.Force(mVersion); err != nil {
 			log.Fatal(err)
 		}
+	default:
+		log.Fatalf("Comando desconhecido: %s", command)
 	}
 }
