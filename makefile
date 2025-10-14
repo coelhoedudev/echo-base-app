@@ -72,7 +72,7 @@ help:
 	@echo "  migrate          - Run database migrations"
 	@echo "  rollback         - Rollback migrations"
 	@echo "  seed             - Run database seeds"
-	@echo "  migration - Create new migration file"
+	@echo "  migration 		  - Create new migration file"
 	@echo "  docker-up        - Start docker containers"
 	@echo "  docker-down      - Stop docker containers"
 	@echo "  lint             - Run linter"
