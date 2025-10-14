@@ -36,8 +36,9 @@ func (s *service) CreateUser(userDTO *CreateUserDTO) (string, *util.HttpError) {
 		FirstName: userDTO.FirstName,
 		LastName:  userDTO.LastName,
 		Email:     userDTO.Email,
-		Password:  userDTO.Password,
 	}
+
+	user.HashPassword(userDTO.Password)
 
 	id, err := s.repository.Create(&user)
 
